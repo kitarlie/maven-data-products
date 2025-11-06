@@ -1,5 +1,5 @@
 # maven-data-products
-Code to create and use data custom data products using MAVEN data in CDF format. I will try and update this concurrently with my work, but I cannot guarantee that the version available here is exactly the same as the version that I am using.
+Code to create and use data custom data products using MAVEN data in CDF format. I will try and update this concurrently with my work, but I cannot guarantee that the version available here is exactly the same as the version that I am using. Note that I use an env file to store the locations of the MAVEN CDF files (which points to the Lancs LUNA data server) and the intended location of the binned data. 
 
 b_field_histogram.py: creates a plot similar to figure 2 from Brain et al. (2003) 'Martian magnetic morphology: Contributions from the solar wind and crust' from the summarised data in CSV format.
 
