@@ -84,7 +84,7 @@ for year in range(2014, 2024):
 
                     #Update magnetic field frequency if MAVEN is in the solar wind
                     if bow_shock_model.is_in_solarwind(x, y, z):
-                        data_matrix = binning(data_matrix, round_half_int(cdf['MAG_field_MSO'][i][0]), round_half_int(cdf['MAG_field_MSO'][i][1]))
+                        data_matrix = binning(data_matrix, round_half_int(float(cdf['MAG_field_MSO'][i][0])), round_half_int(float(cdf['MAG_field_MSO'][i][1])))
 
                 break
 
