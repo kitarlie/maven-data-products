@@ -43,9 +43,6 @@ data_loc = os.getenv("DATA_LOC")
 print("Opening CDFs")
 
 for year in range(2014, 2025):
-    #Ensure loop gets killed at the end
-    if year == 2024:
-        break
     for day in range(0, 366):
         day_num = str(day)
         year = str(year)
