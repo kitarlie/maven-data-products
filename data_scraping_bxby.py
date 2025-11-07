@@ -22,10 +22,10 @@ def round_half_int(x):
 
 def binning(data_matrix, bx, by):
     #Check whether values are within the range allowed by the matrix.
-    if bx <= -20 or bx > 20:
+    if bx < -20 or bx >= 20:
         print("B_x out of bounds")
         return data_matrix
-    elif by <= -20 or by > 20:
+    elif by < -20 or by >= 20:
         print("B_y out of bounds")
         return data_matrix
     else:
