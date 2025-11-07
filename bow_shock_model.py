@@ -22,7 +22,7 @@ def is_in_solarwind(x, y, z):
       pos = np.matmul(rot_matrix, np.array([x, y, z]))
 
       #Shift coordinate origin to focus of conic section
-      pos -= np.array([x0, 0, 0])
+      pos -= np.array([x0*3389.5, 0, 0])
 
       #Distance from focus of conic section
       r = np.linalg.norm(pos)

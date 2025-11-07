@@ -3,40 +3,29 @@ import bow_shock_model
 import numpy as np
 import csv
 import os
-from math import trunc
 from dotenv import load_dotenv
 from datetime import date, timedelta
 
 #Load in environment variables
 load_dotenv("C:/Users/charl/Documents/Uni/Part II/Year 4/PHYS450/Code/data_locations.env")
 
-def round_half_int(x):
-    #Decimal part of the number
-    y = x - trunc(x)
-    if y >= 0.75:
-        return(trunc(x)+1)
-    elif y < 0.25:
-        return(trunc(x))
-    else:
-        return(trunc(x) + 0.5)
-
 def binning(data_matrix, bx, by):
     #Check whether values are within the range allowed by the matrix.
-    if bx <= -20 or bx > 20:
+    if bx < -20 or bx >= 20:
         print("B_x out of bounds")
         return data_matrix
-    elif by <= -20 or by > 20:
+    elif by < -20 or by >= 20:
         print("B_y out of bounds")
         return data_matrix
     else:
-        i = int(2*by) + 40
-        j = int(2*bx) + 40
+        i = by + 20
+        j = bx + 20
         data_matrix[i][j] += 1
         return data_matrix
 
 
-#80x80 data matrix, containg values for B in the interval -20 nT <= B < 20 nT with resolution 0.5 nT
-data_matrix = [[0]*80 for i in range(0, 80)]
+
+data_matrix = [[0]*40 for i in range(0, 40)]
 
             ######### Get data ##########
 
@@ -44,7 +33,10 @@ data_loc = os.getenv("DATA_LOC")
 
 print("Opening CDFs")
 
-for year in range(2014, 2024):
+for year in range(2014, 2025):
+    #Ensure loop is killed when all data is binned
+    if year == 2024:
+        break
     for day in range(0, 366):
         day_num = str(day)
         year = str(year)
@@ -84,7 +76,7 @@ for year in range(2014, 2024):
 
                     #Update magnetic field frequency if MAVEN is in the solar wind
                     if bow_shock_model.is_in_solarwind(x, y, z):
-                        data_matrix = binning(data_matrix, round_half_int(cdf['MAG_field_MSO'][i][0], 1), round_half_int(cdf['MAG_field_MSO'][i][1], 1))
+                        data_matrix = binning(data_matrix, int(cdf['MAG_field_MSO'][i][0]), int(cdf['MAG_field_MSO'][i][1]))
 
                 break
 
