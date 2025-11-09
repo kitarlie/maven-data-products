@@ -10,23 +10,29 @@ from datetime import date, timedelta
 #Load in environment variables
 load_dotenv("C:/Users/charl/Documents/Uni/Part II/Year 4/PHYS450/Code/data_locations.env")
 
+def sign(x):
+    '''
+    Returns 1 if x>0, and -1 if x<0
+    '''
+    return x/abs(x)
+
 def round_half_int(x):
     #Decimal part of the number
-    y = x - trunc(x)
-    if y >= 0.75:
-        return(trunc(x)+1)
-    elif y < 0.25:
+    y = (x - trunc(x))**2
+    if y >= 0.75**2:
+        return(trunc(x) + sign(x))
+    elif y < 0.25**2:
         return(trunc(x))
     else:
-        return(trunc(x) + 0.5)
+        return(trunc(x) + 0.5*sign(x))
 
 def binning(data_matrix, bx, by):
     #Check whether values are within the range allowed by the matrix.
     if bx < -20 or bx >= 20:
-        print("B_x out of bounds")
+        #print("B_x out of bounds")
         return data_matrix
     elif by < -20 or by >= 20:
-        print("B_y out of bounds")
+        #print("B_y out of bounds")
         return data_matrix
     else:
         i = int(2*by) + 40
