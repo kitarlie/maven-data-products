@@ -10,3 +10,5 @@ Code to create and use data custom data products using MAVEN data in CDF format.
 **data_scraping.py**: takes stored MAVEN data files (in .cdf format) and summarises the x-, y- and z-components of the IMF (magnetometer measurements when MAVEN is outside the bow shock), as well as the magnitude, in frequency bins with resolution 0.1 nT.
 
 **data_scraping_bxby.py**: takes stored MAVEN data files (in .cdf format) and summarises as a 2D matrix containing the frequency of occurrence of x- and y- components of the IMF between -20 nT and 20 nT, with resolution 1 nT.
+
+**math_tools.py**: contains some handy dandy tools for returning the sign of a number and rounding numbers to the nearest half-integer.
