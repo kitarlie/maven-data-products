@@ -1,12 +1,8 @@
 import matplotlib.pyplot as plt 
-import numpy as np
-import math
 import csv
 import os
 from dotenv import load_dotenv
-from matplotlib import cm
-import matplotlib.cbook as cbook
-import matplotlib.colors as colors
+import maths_tools
 
 
 #Load in environment variables
@@ -41,26 +37,29 @@ with open(loc+"binned_xy.csv", 'r') as csvfile:
         ######### Magnitude preprocessing ########
 
 #Split into two separate lists
-bs = [math.trunc(float(b[i][0])) for i in range(len(b))]
+bs = [maths_tools.round_half_int(float(b[i][0])) for i in range(len(b))]
 freq = [int(b[i][1]) for i in range(len(b))]
 
-bs_int = []
-freq_int = []
+bs_half_int = []
+freq_half_int = []
 
 #Re-bin data to integer values
 for b in bs:
     i = bs.index(b)
-    if b in bs_int:
-        j = bs_int.index(b)
-        freq_int[j] += freq[i]
+    if b in bs_half_int:
+        j = bs_half_int.index(b)
+        freq_half_int[j] += freq[i]
     else:
-        bs_int.append(b)
-        freq_int.append(freq[i])
+        bs_half_int.append(b)
+        freq_half_int.append(freq[i])
 
 #Add extra row as endpoint for step plot
-bs_int.append(bs_int[-1]+1)
+bs_half_int.append(bs_half_int[-1]+0.5)
 
+        ######### bx/by preprocessing ########
 
+#Reverse the list so that B_y decreases along the vertical axis
+matrix = matrix[::-1]
 
         ######## Plotting ########
 
@@ -72,7 +71,7 @@ fig.suptitle("Magnetic field distribution")
             ######## Histogram of magnitude ########
 
 #Plot magnitudes
-ax1.stairs(freq_int, bs_int, color = 'xkcd:black')
+ax1.stairs(freq_half_int, bs_half_int, color = 'xkcd:black')
 
 #Title
 ax1.set_xlabel("$|B|$ (nT)")
@@ -81,7 +80,7 @@ ax1.minorticks_on()
 ax1.set_xlim([0, 20])
 
 #Plot x-y data
-h = ax2.imshow(matrix, cmap = 'plasma', extent = [-20, 20, -20, 20])
+h = ax2.imshow(matrix, cmap = 'binary', extent = [-20, 20, -20, 20])
 ax2.set_xlabel("$B_x$ (nT)")
 ax2.set_ylabel("$B_y$ (nT)")
 ax2.minorticks_on()

@@ -1,30 +1,13 @@
 from spacepy import pycdf
 import bow_shock_model
-import numpy as np
 import csv
 import os
-from math import trunc
 from dotenv import load_dotenv
 from datetime import date, timedelta
+import maths_tools
 
 #Load in environment variables
 load_dotenv("C:/Users/charl/Documents/Uni/Part II/Year 4/PHYS450/Code/data_locations.env")
-
-def sign(x):
-    '''
-    Returns 1 if x>0, and -1 if x<0
-    '''
-    return x/abs(x)
-
-def round_half_int(x):
-    #Decimal part of the number
-    y = (x - trunc(x))**2
-    if y >= 0.75**2:
-        return(trunc(x) + sign(x))
-    elif y < 0.25**2:
-        return(trunc(x))
-    else:
-        return(trunc(x) + 0.5*sign(x))
 
 def binning(data_matrix, bx, by):
     #Check whether values are within the range allowed by the matrix.
@@ -90,7 +73,7 @@ for year in range(2014, 2024):
 
                     #Update magnetic field frequency if MAVEN is in the solar wind
                     if bow_shock_model.is_in_solarwind(x, y, z):
-                        data_matrix = binning(data_matrix, round_half_int(float(cdf['MAG_field_MSO'][i][0])), round_half_int(float(cdf['MAG_field_MSO'][i][1])))
+                        data_matrix = binning(data_matrix, maths_tools.round_half_int(float(cdf['MAG_field_MSO'][i][0])), maths_tools.round_half_int(float(cdf['MAG_field_MSO'][i][1])))
 
                 break
 
