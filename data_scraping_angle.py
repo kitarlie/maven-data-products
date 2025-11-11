@@ -11,13 +11,13 @@ from maths_tools import vector_angle
 load_dotenv("C:/Users/charl/Documents/Uni/Part II/Year 4/PHYS450/Code/data_locations.env")
 
 def bin_values(list, value):
-    list[value] += 1
+    list[value][0] += 1
     return(list)
 
             ######### Initialise binned lists ########
 
-clock_angle = [0]*360
-cone_angle = [0]*360
+clock_angle = [[0] for i in range(0, 360)]
+cone_angle = [[0] for i in range(0, 360)]
  
             ######### Get data ##########
 
@@ -25,7 +25,7 @@ data_loc = os.getenv("DATA_LOC")
 
 print("Opening CDFs")
 
-for year in range(2014, 2025):
+for year in range(2014, 2024):
     for day in range(0, 366):
         day_num = str(day)
         year = str(year)
@@ -60,19 +60,27 @@ for year in range(2014, 2025):
                     y = cdf['SPICE_spacecraft_MSO'][i][1]
                     z = cdf['SPICE_spacecraft_MSO'][i][2]
 
-                    #Append magnetic field data if MAVEN is in the solar wind
-                    if bow_shock_model.is_in_solarwind(x, y, z):
+                    b = cdf['MAG_field_MSO'][i]
+                        
+                    #Only accept reasonable (i.e. non-erroneous) data points
+                    if b[0] > 10**3 or b[1] > 10**3 or b[2] > 10**3: 
+                        continue
+                    elif b[0] < -10**3 or b[1] < -10**3 or b[2] < -10**3:
+                        continue
+                    else:
+                        #Append magnetic field data if MAVEN is in the solar wind
+                        if bow_shock_model.is_in_solarwind(x, y, z):
 
-                        b = cdf['MAG_field_MSO'][i]
-
-                        cone_angle = bin_values(cone_angle, round(vector_angle([1, 0, 0], b)))
-                        clock_angle = bin_values(cone_angle, round(180/np.pi * np.atan2(b[1], b[2])))
+                            cone_angle = bin_values(cone_angle, round(vector_angle([1, 0, 0], b)))
+                            clock_angle = bin_values(clock_angle, round(180/np.pi * np.atan2(b[1], b[2])))
 
 
                 break
 
 #Binned data location
 loc = os.getenv("STORAGE_LOC")
+
+print("Writing data")
 
 #Write the x-component data to a CSV
 with open(loc+"binned_clock-angle.csv", "w") as csvfile:
@@ -83,3 +91,5 @@ with open(loc+"binned_clock-angle.csv", "w") as csvfile:
 with open(loc+"binned_cone-angle.csv", "w") as csvfile:
     csvwriter = csv.writer(csvfile)
     csvwriter.writerows(cone_angle) 
+
+print("Data stored!")
