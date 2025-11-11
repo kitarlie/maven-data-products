@@ -7,8 +7,14 @@ Code to create and use data custom data products using MAVEN data in CDF format,
 
 **bow_shock_model.py**: handles generation of, and comparisons to, a conic section model of the Martian bow shock as described in Hall et al. (2016) 'Annual variations in the Martian bow shock location as observed by the Mars Express mission'.
 
-**data_scraping.py**: takes stored MAVEN data files (in .cdf format) and summarises the x-, y- and z-components of the IMF (magnetometer measurements when MAVEN is outside the bow shock), as well as the magnitude, in frequency bins with resolution 0.1 nT.
+**data_scraping.py**: takes stored MAVEN data files (in .cdf format) and summarises the x-, y- and z-components of the IMF (magnetometer measurements when MAVEN is outside the bow shock), as well as the magnitude, in frequency bins with resolution 0.1 nT, stored in CSVs.
 
-**data_scraping_bxby.py**: takes stored MAVEN data files (in .cdf format) and summarises as a 2D matrix containing the frequency of occurrence of x- and y- components of the IMF between -20 nT and 20 nT, with resolution 1 nT.
+**data_scraping_angle.py**: takes stored MAVEN data files (in .cdf format) and bins the IMF clock and cone angles in integer degrees, stored in CSVs.
 
-**math_tools.py**: contains some handy dandy tools for returning the sign of a number and rounding numbers to the nearest half-integer.
+**data_scraping_bxby.py**: takes stored MAVEN data files (in .cdf format) and summarises as a 2D matrix containing the frequency of occurrence of x- and y- components of the IMF between -20 nT and 20 nT, with resolution 1 nT, stored in CSVs.
+
+**mars_earth_alignment.py**: takes a date, time and critical angle, returns True if Mars and Earth are on the same Parker spiral field line (using the critical angle as the field line width).
+
+**math_tools.py**: contains some handy dandy tools used by multiple scripts.
+
+**MAVEN_orbit_plot_4proj_colorhighlight.py**: creates a graph showing the orbit of MAVEN about Mars in four MSO projections (x-y, x-z, y-z, x-rho) along with a depiction of the bow shock and a colour highlight for when MAVEN is outside the bow shock.
