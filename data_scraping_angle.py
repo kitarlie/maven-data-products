@@ -1,8 +1,12 @@
+'''
+Bins the IMF cone and clock angles for every day in the range with available and reasonable data.
+
+Switch between every day with data and only days with Mars-Earth conjunctions in the IMF using line 78
+'''
+
 from spacepy import pycdf
-import bow_shock_model
+import bow_shock_model, csv, os, mars_earth_alignment
 import numpy as np
-import csv
-import os
 from dotenv import load_dotenv
 from datetime import date, timedelta
 from maths_tools import vector_angle
@@ -22,6 +26,7 @@ cone_angle = [[0] for i in range(0, 360)]
             ######### Get data ##########
 
 data_loc = os.getenv("DATA_LOC")
+crit_angle = os.getenv("CONJUNCTION_ANGLE")
 
 print("Opening CDFs")
 
@@ -68,9 +73,9 @@ for year in range(2014, 2024):
                     elif b[0] < -10**3 or b[1] < -10**3 or b[2] < -10**3:
                         continue
                     else:
-                        #Append magnetic field data if MAVEN is in the solar wind
-                        if bow_shock_model.is_in_solarwind(x, y, z):
-
+                        datetime_string = mars_earth_alignment.time_string(res, i, len(cdf['SPICE_spacecraft_MSO']))
+                        #Append magnetic field data if MAVEN is in the solar wind AND Mars and Earth are within 0.25rad of conjunction in the IMF
+                        if bow_shock_model.is_in_solarwind(x, y, z) and mars_earth_alignment.is_mars_aligned(datetime_string, crit_angle):
                             cone_angle = bin_values(cone_angle, round(vector_angle([1, 0, 0], b)))
                             clock_angle = bin_values(clock_angle, round(180/np.pi * np.atan2(b[1], b[2])))
 

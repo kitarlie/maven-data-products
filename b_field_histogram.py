@@ -1,8 +1,12 @@
+'''
+Plots:
+    A histogram of the magnetic field strength between 0 and 20 nT
+    A 2D histogram of the magnetic field in the x-y plane
+'''
+
 import matplotlib.pyplot as plt 
-import csv
-import os
+import csv, os, maths_tools
 from dotenv import load_dotenv
-import maths_tools
 
 
 #Load in environment variables

@@ -1,10 +1,13 @@
+'''
+Runs over MAVEN CDF files and bins the x- and y-components in a 2D frequency table
+
+Switch between every day with data and only days with Mars-Earth conjunctions in the IMF using line 80
+'''
+
+import bow_shock_model, csv, os, maths_tools, mars_earth_alignment
 from spacepy import pycdf
-import bow_shock_model
-import csv
-import os
 from dotenv import load_dotenv
 from datetime import date, timedelta
-import maths_tools
 
 #Load in environment variables
 load_dotenv("C:/Users/charl/Documents/Uni/Part II/Year 4/PHYS450/Code/data_locations.env")
@@ -30,6 +33,7 @@ data_matrix = [[0]*80 for i in range(0, 80)]
             ######### Get data ##########
 
 data_loc = os.getenv("DATA_LOC")
+crit_angle = os.getenv("CONJUNCTION_ANGLE")
 
 print("Opening CDFs")
 
@@ -60,20 +64,29 @@ for year in range(2014, 2024):
                 #Get CDF path
                 cdf = pycdf.CDF(cdf_path)
 
-                #Extracts magnetic field components outside magnetosphere
-                print("    Extracting data for date " + res)
-                for i in range(0, len(cdf['SPICE_spacecraft_MSO'])):
-                    #Get position vector
-                    x = cdf['SPICE_spacecraft_MSO'][i][0]
-                    y = cdf['SPICE_spacecraft_MSO'][i][1]
-                    z = cdf['SPICE_spacecraft_MSO'][i][2]
+                b = cdf['MAG_field_MSO'][i]
 
-                    if i == 0:
-                        print("    Binning data")
+                #Only accept reasonable (i.e. non-erroneous) data points
+                if b[0] > 10**3 or b[1] > 10**3 or b[2] > 10**3: 
+                    continue
+                elif b[0] < -10**3 or b[1] < -10**3 or b[2] < -10**3:
+                    continue
+                else:
+                    #Extracts magnetic field components outside magnetosphere
+                    print("    Extracting data for date " + res)
+                    for i in range(0, len(cdf['SPICE_spacecraft_MSO'])):
+                        #Get position vector
+                        x = cdf['SPICE_spacecraft_MSO'][i][0]
+                        y = cdf['SPICE_spacecraft_MSO'][i][1]
+                        z = cdf['SPICE_spacecraft_MSO'][i][2]
 
-                    #Update magnetic field frequency if MAVEN is in the solar wind
-                    if bow_shock_model.is_in_solarwind(x, y, z):
-                        data_matrix = binning(data_matrix, maths_tools.round_half_int(float(cdf['MAG_field_MSO'][i][0])), maths_tools.round_half_int(float(cdf['MAG_field_MSO'][i][1])))
+                        if i == 0:
+                            print("    Binning data")
+
+                        datetime_string = mars_earth_alignment.time_string(res, i, len(cdf['SPICE_spacecraft_MSO']))
+                        #Update magnetic field frequency if MAVEN is in the solar wind
+                        if bow_shock_model.is_in_solarwind(x, y, z) and mars_earth_alignment.is_mars_aligned(datetime_string, crit_angle):
+                            data_matrix = binning(data_matrix, maths_tools.round_half_int(float(b[0])), maths_tools.round_half_int(float(b[1])))
 
                 break
 

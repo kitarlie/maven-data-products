@@ -1,3 +1,11 @@
+'''
+Contains the following handy dandy maths tools:
+
+    sign(x): returns the sign of a number x (+1 or -1)
+    round_half_int(x): returns the half-integer closest to x
+    vector_angle(a,b): returns the angle between vectors a and b in degrees
+'''
+
 from math import trunc
 from numpy import acos, linalg, pi
 

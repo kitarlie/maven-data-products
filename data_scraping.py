@@ -1,5 +1,11 @@
+'''
+Runs over MAVEN CDF files and bins the magnetic field components + magnitude in frequency tables
+
+Switch between every day with data and only days with Mars-Earth conjunctions in the IMF using line 95
+'''
+
 from spacepy import pycdf
-import bow_shock_model
+import bow_shock_model, mars_earth_alignment
 import numpy as np
 import csv
 import os
@@ -39,6 +45,7 @@ mag_keys = []
             ######### Get data ##########
 
 data_loc = os.getenv("DATA_LOC")
+crit_angle = os.getenv("CONJUNCTION_ANGLE")
 
 print("Opening CDFs")
 
@@ -82,12 +89,22 @@ for year in range(2014, 2025):
                     y = cdf['SPICE_spacecraft_MSO'][i][1]
                     z = cdf['SPICE_spacecraft_MSO'][i][2]
 
-                    #Append magnetic field data if MAVEN is in the solar wind
-                    if bow_shock_model.is_in_solarwind(x, y, z):
+                    b = cdf['MAG_field_MSO'][i]
 
-                        bxs.append(cdf['MAG_field_MSO'][i][0])
-                        bys.append(cdf['MAG_field_MSO'][i][1])
-                        bzs.append(cdf['MAG_field_MSO'][i][2])
+                    #Only accept reasonable (i.e. non-erroneous) data points
+                    if b[0] > 10**3 or b[1] > 10**3 or b[2] > 10**3: 
+                        continue
+                    elif b[0] < -10**3 or b[1] < -10**3 or b[2] < -10**3:
+                        continue
+                    else:
+                        datetime_string = mars_earth_alignment.time_string(res, i, len(cdf['SPICE_spacecraft_MSO']))
+
+                        #Append magnetic field data if MAVEN is in the solar wind
+                        if bow_shock_model.is_in_solarwind(x, y, z) and mars_earth_alignment.is_mars_aligned(datetime_string, crit_angle):
+
+                            bxs.append(b[0])
+                            bys.append(b[1])
+                            bzs.append(b[2])
 
                 #Magnitude of magnetic field
                 bs = [np.sqrt(bxs[i]**2 + bys[i]**2 + bzs[i]**2) for i in range(len(bxs))]
