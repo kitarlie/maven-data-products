@@ -3,12 +3,13 @@ For checking whether Earth and Mars lie on the same Parker field line (or within
 '''
 
 from astropy.time import Time
+from datetime import date, timedelta
 from astropy import units as u
 from astropy.coordinates import get_body_barycentric, Angle
 import numpy as np
-from math import trunc
+import csv
 
-def time_string(daystring, i, i_max):
+def time_string(year, day):
     '''
     Parameters:
         daystring (str): the date in format "YYYYMMDD" 
@@ -18,39 +19,26 @@ def time_string(daystring, i, i_max):
     Returns:   
         The date and time in format "YYYY-MM-DD hh:mm"
     '''
-    #Split daystring (YYYYMMDD) into year, month and day
-    year = daystring[:4]
-    month = daystring[4:6]
-    day = daystring[6:]
+    #Day 1 of the year
+    strt_date = date(int(year), 1, 1)
 
-    #Get time in HH:MM for the current index
-    time = trunc(i/i_max * 24*60)
-    minute = time % 60
-    hour = str(int((time - minute)/60))
-    minute = str(minute)
-
-    #Ensures minute and hour have 2 digits each
-    if len(minute) == 1:
-        minute = "0" + minute
-    if len(hour) == 1:
-        hour = "0" + hour
+    #Convert to date
+    res_date = strt_date + timedelta(days=int(day) - 1)
+    res = res_date.strftime("%Y-%m-%d")
 
     #Return date and time in form "YYYY-MM-DD hh:mm"
-    return(year+"-"+month+"-"+day+" "+hour+":"+minute)
+    return(res + " 00:00")
 
 
 
-def is_mars_aligned(t, a):
+def is_mars_aligned(t):
     '''
     Inputs: t: the date and time
-            a: the critical angle within which Earth and Mars are considered to be 'aligned' in the Parker spiral in radians
+    Returns: delta: the angle (in degrees) between the Parker spiral field lines associated with Earth and Mars, extrapolated back to the Earth's orbit.
     '''
-
-    print(t)
 
     t = Time(t)
 
-    angle = Angle(a, unit = u.rad)
     half_turn = Angle(np.pi, unit = u.rad)
     full_turn = Angle(2*np.pi, unit = u.rad)
 
@@ -79,8 +67,19 @@ def is_mars_aligned(t, a):
     #Changes reflex angle to complementary acute/obtuse angle
     if delta > half_turn:
         delta = full_turn - delta
+
+    #Extract numerical value
+    delta = delta.to_string()
+    delta = delta.split(' ')
+    delta = float(delta[0])
     
-    if delta <= angle:
-        return True
-    else:
-        return False
+    return delta*180/np.pi
+
+with open("C:/Users/charl/Documents/Uni/Part II/Year 4/PHYS450/conjunction-angles.csv", "w") as csvfile:
+    csvwriter = csv.writer(csvfile)
+    csvwriter.writerow(["Year", "Day", "Conjunction angle"])
+    for year in range(1981, 2024):
+        for day in range(1, 367):
+            time = time_string(year, day)
+            delta = is_mars_aligned(time)
+            csvwriter.writerow([year, day, delta])
