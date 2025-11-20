@@ -4,7 +4,7 @@ Runs over MAVEN CDF files and bins the x- and y-components in a 2D frequency tab
 Switch between every day with data and only days with Mars-Earth conjunctions in the IMF using line 80
 '''
 
-import bow_shock_model, csv, os, maths_tools, mars_earth_alignment
+import bow_shock_model, csv, os, maths_tools
 from spacepy import pycdf
 from dotenv import load_dotenv
 from datetime import date, timedelta
@@ -33,7 +33,6 @@ data_matrix = [[0]*80 for i in range(0, 80)]
             ######### Get data ##########
 
 data_loc = os.getenv("DATA_LOC")
-crit_angle = os.getenv("CONJUNCTION_ANGLE")
 
 print("Opening CDFs")
 
@@ -52,7 +51,7 @@ for year in range(2014, 2024):
         #Iterate over any possible version number
         for i in range(20, -1, -1):
             if i == 0:
-                print("No data file located for date " + res)
+                #print("No data file located for date " + res)
                 continue
             cdf_path = data_loc + "mvn_insitu_kp-4sec_" + res + "_v" + str(i)+ "_r01.cdf"
             try:
@@ -60,7 +59,7 @@ for year in range(2014, 2024):
             except pycdf.CDFError:
                 continue
             else:
-                print("File located for date " + res)
+                #print("File located for date " + res)
                 #Get CDF path
                 cdf = pycdf.CDF(cdf_path)
 
@@ -73,19 +72,18 @@ for year in range(2014, 2024):
                     continue
                 else:
                     #Extracts magnetic field components outside magnetosphere
-                    print("    Extracting data for date " + res)
+                    #print("    Extracting data for date " + res)
                     for i in range(0, len(cdf['SPICE_spacecraft_MSO'])):
                         #Get position vector
                         x = cdf['SPICE_spacecraft_MSO'][i][0]
                         y = cdf['SPICE_spacecraft_MSO'][i][1]
                         z = cdf['SPICE_spacecraft_MSO'][i][2]
 
-                        if i == 0:
-                            print("    Binning data")
+                        #if i == 0:
+                        #    print("    Binning data")
 
-                        datetime_string = mars_earth_alignment.time_string(res, i, len(cdf['SPICE_spacecraft_MSO']))
                         #Update magnetic field frequency if MAVEN is in the solar wind
-                        if bow_shock_model.is_in_solarwind(x, y, z) and mars_earth_alignment.is_mars_aligned(datetime_string, crit_angle):
+                        if bow_shock_model.is_in_solarwind(x, y, z):
                             data_matrix = binning(data_matrix, maths_tools.round_half_int(float(b[0])), maths_tools.round_half_int(float(b[1])))
 
                 break
@@ -95,12 +93,6 @@ for year in range(2014, 2024):
 
 #Binned data location
 loc = os.getenv("STORAGE_LOC")
-
-sum = 0
-for i in data_matrix:
-    for j in i:
-        sum += j
-
 
 #Write the data matrix data to a CSV
 print("Writing data")

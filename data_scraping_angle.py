@@ -5,7 +5,7 @@ Switch between every day with data and only days with Mars-Earth conjunctions in
 '''
 
 from spacepy import pycdf
-import bow_shock_model, csv, os, mars_earth_alignment
+import bow_shock_model, csv, os
 import numpy as np
 from dotenv import load_dotenv
 from datetime import date, timedelta
@@ -45,7 +45,7 @@ for year in range(2014, 2024):
         #Iterate over any possible version number
         for i in range(20, -1, -1):
             if i == 0:
-                print("No data file located for date " + res)
+                #print("No data file located for date " + res)
                 continue
             cdf_path = data_loc + "mvn_insitu_kp-4sec_" + res + "_v" + str(i)+ "_r01.cdf"
             try:
@@ -53,12 +53,12 @@ for year in range(2014, 2024):
             except pycdf.CDFError:
                 continue
             else:
-                print("File located for date " + res)
-                #Get CDF path
+                #print("File located for date " + res)
+                #Get CDF
                 cdf = pycdf.CDF(cdf_path)
 
                 #Extracts magnetic field components outside magnetosphere
-                print("    Extracting data for date " + res)
+                #print("    Extracting data for date " + res)
                 for i in range(0, len(cdf['SPICE_spacecraft_MSO'])):
                     #Get position vector
                     x = cdf['SPICE_spacecraft_MSO'][i][0]
@@ -73,9 +73,8 @@ for year in range(2014, 2024):
                     elif b[0] < -10**3 or b[1] < -10**3 or b[2] < -10**3:
                         continue
                     else:
-                        datetime_string = mars_earth_alignment.time_string(res, i, len(cdf['SPICE_spacecraft_MSO']))
                         #Append magnetic field data if MAVEN is in the solar wind AND Mars and Earth are within 0.25rad of conjunction in the IMF
-                        if bow_shock_model.is_in_solarwind(x, y, z) and mars_earth_alignment.is_mars_aligned(datetime_string, crit_angle):
+                        if bow_shock_model.is_in_solarwind(x, y, z):
                             cone_angle = bin_values(cone_angle, round(vector_angle([1, 0, 0], b)))
                             clock_angle = bin_values(clock_angle, round(180/np.pi * np.atan2(b[1], b[2])))
 
