@@ -7,6 +7,7 @@ Plots:
 import matplotlib.pyplot as plt 
 import csv, os, maths_tools
 from dotenv import load_dotenv
+import numpy as np
 
 
 #Load in environment variables
@@ -31,8 +32,6 @@ with open(loc+"binned_mag.csv", 'r') as csvfile:
 #Read in x-y matrix
 with open(loc+"binned_xy.csv", 'r') as csvfile:
     csvreader = csv.reader(csvfile) 
-
-    fields = next(csvreader)
     for row in csvreader:  
         if len(row) != 0:
             row_ints = [int(x) for x in row]   
@@ -62,6 +61,7 @@ bs_half_int.append(bs_half_int[-1]+0.5)
 
         ######### bx/by preprocessing ########
 
+
 #Reverse the list so that B_y decreases along the vertical axis
 matrix = matrix[::-1]
 
@@ -87,7 +87,11 @@ ax1.set_xlim([0, 20])
 h = ax2.imshow(matrix, cmap = 'binary', extent = [-20, 20, -20, 20])
 ax2.set_xlabel("$B_x$ (nT)")
 ax2.set_ylabel("$B_y$ (nT)")
+ax2.set_xlim([-10, 10])
+ax2.set_ylim([-10, 10])
 ax2.minorticks_on()
+
+
 
 #Colorbar
 fig.colorbar(h, ax=ax2, label = 'Frequency')

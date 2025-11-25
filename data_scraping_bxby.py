@@ -51,40 +51,36 @@ for year in range(2014, 2024):
         #Iterate over any possible version number
         for i in range(20, -1, -1):
             if i == 0:
-                #print("No data file located for date " + res)
+                print("No data file located for date " + res)
                 continue
             cdf_path = data_loc + "mvn_insitu_kp-4sec_" + res + "_v" + str(i)+ "_r01.cdf"
             try:
+                #Get CDF path
                 cdf = pycdf.CDF(cdf_path)
             except pycdf.CDFError:
                 continue
             else:
-                #print("File located for date " + res)
+                print("File located for date " + res)
+                
                 #Get CDF path
-                cdf = pycdf.CDF(cdf_path)
+                #cdf = pycdf.CDF(cdf_path)
 
-                b = cdf['MAG_field_MSO'][i]
+                #Extracts magnetic field components outside magnetosphere
+                print("    Extracting data for date " + res)
+                for j in range(0, len(cdf['SPICE_spacecraft_MSO'])):
+                    b = cdf['MAG_field_MSO'][j]
 
-                #Only accept reasonable (i.e. non-erroneous) data points
-                if b[0] > 10**3 or b[1] > 10**3 or b[2] > 10**3: 
-                    continue
-                elif b[0] < -10**3 or b[1] < -10**3 or b[2] < -10**3:
-                    continue
-                else:
-                    #Extracts magnetic field components outside magnetosphere
-                    #print("    Extracting data for date " + res)
-                    for i in range(0, len(cdf['SPICE_spacecraft_MSO'])):
-                        #Get position vector
-                        x = cdf['SPICE_spacecraft_MSO'][i][0]
-                        y = cdf['SPICE_spacecraft_MSO'][i][1]
-                        z = cdf['SPICE_spacecraft_MSO'][i][2]
+                    #Get position vector
+                    x = cdf['SPICE_spacecraft_MSO'][j][0]
+                    y = cdf['SPICE_spacecraft_MSO'][j][1]
+                    z = cdf['SPICE_spacecraft_MSO'][j][2]
 
-                        #if i == 0:
-                        #    print("    Binning data")
+                    if j == 0:
+                        print("    Binning data")
 
-                        #Update magnetic field frequency if MAVEN is in the solar wind
-                        if bow_shock_model.is_in_solarwind(x, y, z):
-                            data_matrix = binning(data_matrix, maths_tools.round_half_int(float(b[0])), maths_tools.round_half_int(float(b[1])))
+                    #Update magnetic field frequency if MAVEN is in the solar wind
+                    if bow_shock_model.is_in_solarwind(x, y, z):
+                        data_matrix = binning(data_matrix, maths_tools.round_half_int(float(b[0])), maths_tools.round_half_int(float(b[1])))
 
                 break
 
@@ -92,7 +88,9 @@ for year in range(2014, 2024):
             ######## Write data to CSV ########
 
 #Binned data location
-loc = os.getenv("STORAGE_LOC")
+#loc = os.getenv("STORAGE_LOC")
+
+loc = "C:/Users/charl/Documents/Uni/Part II/Year 4/PHYS450/MAVEN-data/binned"
 
 #Write the data matrix data to a CSV
 print("Writing data")
