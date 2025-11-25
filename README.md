@@ -9,11 +9,17 @@ Code to create and use data custom data products using MAVEN data in CDF format,
 
 **bow_shock_model.py**: handles generation of, and comparisons to, a conic section model of the Martian bow shock as described in Hall et al. (2016) 'Annual variations in the Martian bow shock location as observed by the Mars Express mission'.
 
+**conj_data_scraping.py**: takes stored MAVEN data files (in .cdf format) and summarises the magnitude of the IMF while Earth and Mars are on the same IMF field line in frequency bins with resolution 0.1 nT, stored in CSVs.
+
+**conj_data_scraping_angle.py**: takes stored MAVEN data files (in .cdf format) and bins the IMF clock and cone angles in integer degrees while Earth and Mars are on the same IMF field line, stored in CSVs.
+
+**conj_data_scraping_bxby.py**: takes stored MAVEN data files (in .cdf format) and summarises as a 2D matrix containing the frequency of occurrence of x- and y- components of the IMF between -20 nT and 20 nT, with resolution 0.5 nT, while Earth and Mars are on the same IMF field line stored in CSVs.
+
 **data_scraping.py**: takes stored MAVEN data files (in .cdf format) and summarises the magnitude of the IMF (magnetometer measurements when MAVEN is outside the bow shock) in frequency bins with resolution 0.1 nT, stored in CSVs.
 
 **data_scraping_angle.py**: takes stored MAVEN data files (in .cdf format) and bins the IMF clock and cone angles in integer degrees, stored in CSVs.
 
-**data_scraping_bxby.py**: takes stored MAVEN data files (in .cdf format) and summarises as a 2D matrix containing the frequency of occurrence of x- and y- components of the IMF between -20 nT and 20 nT, with resolution 1 nT, stored in CSVs.
+**data_scraping_bxby.py**: takes stored MAVEN data files (in .cdf format) and summarises as a 2D matrix containing the frequency of occurrence of x- and y- components of the IMF between -20 nT and 20 nT, with resolution 0.5 nT, stored in CSVs.
 
 **mars_earth_alignment.py**: generates a CSV containing the Mars-Earth angle in the ecliptic plane between 1981 and 2024.
 
@@ -25,4 +31,4 @@ Code to create and use data custom data products using MAVEN data in CDF format,
 
 **omni_data_scraping_angle**: takes stored OMNI data files (in .asc format) and bins the IMF clock and cone angles in integer degrees, stored in CSVs.
 
-**omni_data_scraping_bxby**: takes stored MAVEN data files (in .cdf format) and summarises as a 2D matrix containing the frequency of occurrence of x- and y- components of the IMF between -20 nT and 20 nT, with resolution 1 nT, stored in CSVs.
+**omni_data_scraping_bxby**: takes stored MAVEN data files (in .cdf format) and summarises as a 2D matrix containing the frequency of occurrence of x- and y- components of the IMF between -20 nT and 20 nT, with resolution 0.5 nT, stored in CSVs.
