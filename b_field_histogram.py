@@ -61,7 +61,6 @@ bs_half_int.append(bs_half_int[-1]+0.5)
 
         ######### bx/by preprocessing ########
 
-
 #Reverse the list so that B_y decreases along the vertical axis
 matrix = matrix[::-1]
 
@@ -90,7 +89,6 @@ ax2.set_ylabel("$B_y$ (nT)")
 ax2.set_xlim([-10, 10])
 ax2.set_ylim([-10, 10])
 ax2.minorticks_on()
-
 
 
 #Colorbar
