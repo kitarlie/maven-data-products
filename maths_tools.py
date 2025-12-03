@@ -40,18 +40,33 @@ def vector_angle(a, b):
 
 def resduals_squared(m, matrix):
     sum = 0
-    for i in range(80):
-        for j in range(80):
-            sum += matrix[i][j]*abs(((i/2 - 20) - m[0]*(j/2 - 20) - m[1]))
+    for i in range(10):
+        for j in range(10):
+            sum += matrix[i][j]*abs(((i/2 - 5) - m[0]*(j/2 - 5) - m[1]))
     return sum
 
 
 def best_fit(matrix):
-
     fun=lambda m: resduals_squared(m, matrix)
     optimizeResult = minimize(fun, [-1, 0])
 
     print(optimizeResult.x)
 
     return optimizeResult.x[0], optimizeResult.x[1]
+
+def median(matrix):
+    medians = []
+    for j in range(80):
+        sum = 0
+        for i in range(80):
+            sum += matrix[i][j]
+        count = 0
+        for i in range(80):
+            count += matrix[i][j]
+            if count > sum/2:
+                medians.append(i/2 - 20)
+                break
+    return medians
+
+
     

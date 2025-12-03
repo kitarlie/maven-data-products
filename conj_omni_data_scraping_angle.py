@@ -12,6 +12,20 @@ from maths_tools import vector_angle
 #Load in environment variables
 load_dotenv("C:/Users/charl/Documents/Uni/Part II/Year 4/PHYS450/Code/data_locations.env")
 
+conj_angles = []
+crit_angle = 15
+
+#Open conjunction angle file
+with open("C:/Users/charl/Documents/Uni/Part II/Year 4/PHYS450/conjunction-angles.csv", 'r') as csvfile:
+    csvreader = csv.reader(csvfile) 
+
+    fields = next(csvreader)
+    for row in csvreader:  
+        #Add all numerical angles
+        if len(row) != 0 and row[0] != "Year":   
+            conj_angles.append(float(row[2]))
+
+
 def bin_values(list, value):
     list[value][0] += 1
     return(list)
@@ -38,6 +52,8 @@ for year in range(2014, 2024):
         else:
             print("File located for " + month_txt + "-" + str(year))
             for row in ascii_grid:
+                conj_index = 366*(year-1981) + int(row[1]) - 1
+                if conj_angles[conj_index] <= crit_angle:
                     b = [float(row[14]), float(row[15]), float(row[16])]
                     if abs(b[0]) > 999 or abs(b[1]) > 999 or abs(b[2]) > 999:
                         continue
