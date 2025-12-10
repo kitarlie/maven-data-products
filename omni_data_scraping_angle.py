@@ -25,7 +25,7 @@ cone_angle = [[0] for i in range(0, 360)]
 
 data_loc = os.getenv("OMNI_LOC")
 
-for year in range(2014, 2024):
+for year in range(1981, 2024):
     for month in range(1, 13):
         month_txt = str(month)
         if len(month_txt) == 1:

@@ -18,7 +18,8 @@ clockangles = range(-180, 181)
 coneangles = range(0, 181)
 
 #Binned data location
-loc = os.getenv("STORAGE_LOC")
+#loc = os.getenv("STORAGE_LOC")
+loc = "C:/Users/charl/Documents/Uni/Part II/Year 4/PHYS450/OMNI-data/binned-conjunction-mvn/"
 
 #Read in clock angle
 with open(loc+"binned_clock-angle.csv", 'r') as csvfile:

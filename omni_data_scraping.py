@@ -27,7 +27,7 @@ def bin_data(binned, value):
 #Initialise lists
 bs = [[x/10, 0] for x in range(0, 10000)]
 
-for year in range(2014, 2024):
+for year in range(1981, 2024):
     for month in range(1, 13):
         month_txt = str(month)
         if len(month_txt) == 1:

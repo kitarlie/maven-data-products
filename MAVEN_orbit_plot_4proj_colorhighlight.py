@@ -19,7 +19,7 @@ Rtd = Rtd * 3389.5
 
             ######### Get data ##########
 
-cdf = pycdf.CDF("S:/data/maven/maven/data/sci/kp/cdfs/mvn_insitu_kp-4sec_20140923_v20_r01.cdf")
+cdf = pycdf.CDF("S:/data/maven/maven/data/sci/kp/cdfs/mvn_insitu_kp-4sec_20140410_v13_r03.cdf")
 
 #Components of MAVEN position vector in Mars-Solar-Orbital coordinates
 xs_in = []
@@ -35,7 +35,7 @@ for i in range(0, len(cdf['SPICE_spacecraft_MSO'])):
     x = cdf['SPICE_spacecraft_MSO'][i][0]
     y = cdf['SPICE_spacecraft_MSO'][i][1]
     z = cdf['SPICE_spacecraft_MSO'][i][2]
-    print(cdf['MAG_field_MSO'][i])
+    print(cdf['SPICE_spacecraft_MSO'][i])
 
     if bow_shock_model.is_in_solarwind(x, y, z) == True:
         xs_out.append(cdf['SPICE_spacecraft_MSO'][i][0])
@@ -67,7 +67,7 @@ y = r * np.sin(theta)
 fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2)
 fig.tight_layout()
 
-
+fig.suptitle("April 10th 2014")
 
             ######### X-Y projection ##########
 

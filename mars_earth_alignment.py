@@ -31,7 +31,7 @@ def time_string(year, day):
 
 def time_string_minsec(year, day, hour, min):
     #Day 1 of the year
-    strt_date = date(int(year), 1, 1)
+    strt_date = date(year, 1, 1)
 
     hour = str(hour)
     if len(hour) == 1:
@@ -58,6 +58,7 @@ def is_mars_aligned(t):
 
     half_turn = Angle(np.pi, unit = u.rad)
     full_turn = Angle(2*np.pi, unit = u.rad)
+    zero_angle = Angle(0, unit = u.rad)
 
     #Heliocentric coordinates of Mars and Earth
     mars = (get_body_barycentric('mars', t) - get_body_barycentric('sun', t))
@@ -66,19 +67,27 @@ def is_mars_aligned(t):
     mars_r = mars.norm()
     earth_r = earth.norm()
     
-    #The angle relative to the x-axis of the IMF field line connecting the Sun to Mars, at Earth's orbit
-    mars_t = (earth_r/mars_r)*np.arctan2(mars.y, mars.x)
+    #Mars' heliospheric longitude
+    mars_t = np.arctan2(mars.y, mars.x)
+
+    #The angle relative to the x-axis of the point IMF field line connecting the Sun to Mars, coinciding with Earth's orbit
+    mars_t_e = (2*np.pi/(25*24*60*60 * 440000))*149597871*(mars_r - earth_r)
+
+    #Extract numerical value
+    mars_t_e = mars_t_e.to_string()
+    mars_t_e = mars_t_e.split(' ')
+    mars_t_e = float(mars_t_e[0])
+
+    #Create angle object
+    mars_t_e = mars_t + Angle(mars_t_e, unit = u.rad)
 
     #The angle relative to the x-axis of the IMF field line connecting the Sun to Earth, at Earth's orbit
     earth_t = np.arctan2(earth.y, earth.x)
 
     #Difference between angles
-    delta = earth_t - mars_t
+    delta = earth_t - mars_t_e
 
-    #### Angle handling ####
-
-    #Makes all angles positive (i.e. changes direction of negative angle separation)
-    if delta < 0:
+    if delta < zero_angle:
         delta = -delta
 
     #Changes reflex angle to complementary acute/obtuse angle
@@ -100,12 +109,13 @@ def get_mars_time(omni_time, sw_velocity):
         sw_velocity (float): the solar wind flow speed in km/s
     """
 
-    t = time_string_minsec(omni_time[0], omni_time[1], omni_time[2], omni_time[3])
+    t = time_string_minsec(int(omni_time[0]), int(omni_time[1]), int(omni_time[2]), int(omni_time[3]))
     t = Time(t)
 
 
     half_turn = Angle(np.pi, unit = u.rad)
     full_turn = Angle(2*np.pi, unit = u.rad)
+    zero_angle = Angle(0, unit = u.rad)
 
     #Heliocentric coordinates of Mars and Earth
     mars = (get_body_barycentric('mars', t) - get_body_barycentric('sun', t))
@@ -125,7 +135,7 @@ def get_mars_time(omni_time, sw_velocity):
     delta = mars_t - earth_t
 
     #Makes all angles positive (i.e. changes direction of negative angle separation)
-    if delta < 0:
+    if delta < zero_angle:
         delta = -delta
 
     #Changes reflex angle to complementary acute/obtuse angle
@@ -142,13 +152,12 @@ def get_mars_time(omni_time, sw_velocity):
     delta_r = delta_r.split(' ')
     delta_r = float(delta_r[0])
 
-    omega = 2*np.pi/(27*24*60*60)
+    omega = 2*np.pi/(25*24*60*60)
 
-    #Vennerstrom time delta
+    #Vennerstrom time delta (using 1AU = 149597871km)
     dt = 149597871*delta_r/sw_velocity + delta_r/omega
 
     #Calculate changes in day, minute and hour
-    print(dt)
     dday = int(dt/(24*60*60))
     dt -= dday*24*60*60
     dhour = int(dt/(60*60))
@@ -172,7 +181,7 @@ def get_mars_time(omni_time, sw_velocity):
 
     n_day = omni_time[1]+dday
     #Leap year
-    if n_day > 366 and int(str(omni_time[0])[2:]):
+    if n_day > 366 and omni_time[0]%4 == 0:
         year += 1
         n_day -= 366
     elif n_day > 365:

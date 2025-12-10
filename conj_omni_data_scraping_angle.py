@@ -1,7 +1,5 @@
 '''
 Bins the IMF cone and clock angles for every day in the range with available and reasonable data.
-
-Switch between every day with data and only days with Mars-Earth conjunctions in the IMF using line 78
 '''
 
 import csv, os
@@ -25,7 +23,6 @@ with open("C:/Users/charl/Documents/Uni/Part II/Year 4/PHYS450/conjunction-angle
         if len(row) != 0 and row[0] != "Year":   
             conj_angles.append(float(row[2]))
 
-
 def bin_values(list, value):
     list[value][0] += 1
     return(list)
@@ -39,7 +36,7 @@ cone_angle = [[0] for i in range(0, 360)]
 
 data_loc = os.getenv("OMNI_LOC")
 
-for year in range(2014, 2024):
+for year in range(1981, 2024):
     for month in range(1, 13):
         month_txt = str(month)
         if len(month_txt) == 1:

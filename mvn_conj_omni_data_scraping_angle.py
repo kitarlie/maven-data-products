@@ -67,7 +67,7 @@ for year in range(2014, 2024):
                         mvn_time = get_mars_time([row[0], row[1], row[2], row[3]], row[21])
 
                         #Day 1 of the year
-                        strt_date = date(str(mvn_time[0]), 1, 1)
+                        strt_date = date(int(mvn_time[0]), 1, 1)
 
                         #Convert to date
                         res_date = strt_date + timedelta(days=int(mvn_time[1]) - 1)
@@ -76,7 +76,7 @@ for year in range(2014, 2024):
                         for i in range(20, -1, -1):
                             if i == 0:
                                 continue
-                            cdf_path = data_loc + "mvn_insitu_kp-4sec_" + res + "_v" + str(i)+ "_r01.cdf"
+                            cdf_path = mvn_loc + "mvn_insitu_kp-4sec_" + res + "_v" + str(i)+ "_r01.cdf"
                             try:
                                 cdf = pycdf.CDF(cdf_path)
                             except pycdf.CDFError:
